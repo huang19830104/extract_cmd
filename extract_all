@@ -13,18 +13,15 @@ path=`pwd`
 target="${path}/${1}"
 while [ $i -lt 10 ];
 do
-grep "ADM-DUT$i" $target
+grep -E "ADM-DUT$i|ADM-DEVICE$i" $target
 if [ "$?" != "0" ];then
     i=`expr $i + 1`
     continue;
 fi
-dut="${path}/DUT${i}_CMD"
+dut="${path}/DEVICE${i}_CMD"
 cat $target > $dut
-sed -i "/\($tag#\|$tag(\)/!d" "$dut"
-sed -i "/^ADM-DUT$i/!d" "$dut"
-sed -i "s/^ADM-DUT.*#//g" "$dut"
-#sed -i "1iconfig" "$dut"
-#sed -i "/^end/aconfig" "$dut"
-#sed -i '$s/config//g' "$dut"
+sed -i "/localhost(\|sp-sc1(\|ericsson(\|sf-rp-s9m(\|router6000(\|Ericsson(\|localhost#\|sp-sc1#\|ericsson#\|sf-rp-s9m#\|router6000#\|Ericsson#/!d" "$dut"
+sed -i "/^ADM-DUT$i\|^ADM-DEVICE$i/!d" "$dut"
+sed -i "s/^ADM-DUT.*#\|^ADM-DEVICE.*#//g" "$dut"
 i=`expr $i + 1`
 done
